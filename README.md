@@ -31,7 +31,7 @@ pool.enq_job(f);
 where <code>f</code> is a lambda <code>\[\](void) -> void {}</code> (or <code>std::function\<void(void)\></code>). You can queue as many jobs as you like and they will be started whenever a thread is free.
 
 ## Stop
-You prevent new jobs from being started with:
+You prevent new jobs from the queue from being started with:
 ```
 pool.stop();
 ```
