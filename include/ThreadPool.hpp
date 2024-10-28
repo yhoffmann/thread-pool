@@ -1,4 +1,6 @@
 #pragma once
+#ifndef THREADPOOL_HPP
+#define THREADPOOL_HPP
 
 
 #include <stdlib.h>
@@ -166,3 +168,6 @@ void ThreadPool::stop() {
 
     m_threads.clear();
 }
+
+
+#endif // THREADPOOL_HPP
