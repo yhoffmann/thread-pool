@@ -47,19 +47,19 @@ protected:
 }; // class ThreadPool
 
 
-ThreadPool::ThreadPool(size_t num_threads)
+inline ThreadPool::ThreadPool(size_t num_threads)
     : m_num_active_tasks(0)
 {
     start(num_threads);
 }
 
 
-ThreadPool::~ThreadPool() {
+inline ThreadPool::~ThreadPool() {
     stop();
 }
 
 
-void ThreadPool::start(size_t num_threads) {
+inline void ThreadPool::start(size_t num_threads) {
     {
         std::unique_lock<std::mutex> jobs_lck(m_jobs_mtx);
         m_command_stop = false;
@@ -77,10 +77,10 @@ void ThreadPool::start(size_t num_threads) {
 }
 
 
-void ThreadPool::thread_loop() {
+inline void ThreadPool::thread_loop() {
     while (true) {
         std::function<void()> job;
-        
+
         {
             std::unique_lock<std::mutex> jobs_lck(m_jobs_mtx);
             m_start_new_job.wait(jobs_lck, [this] {
@@ -107,7 +107,7 @@ void ThreadPool::thread_loop() {
 }
 
 
-void ThreadPool::enq_job(const std::function<void()>& job) {
+inline void ThreadPool::enq_job(const std::function<void()>& job) {
     {
         std::unique_lock<std::mutex> jobs_lck(m_jobs_mtx);
         m_jobs.push(job);
@@ -117,19 +117,19 @@ void ThreadPool::enq_job(const std::function<void()>& job) {
 }
 
 
-size_t ThreadPool::get_num_active_tasks() {
+inline size_t ThreadPool::get_num_active_tasks() {
     return size_t(m_num_active_tasks);
 }
 
 
-bool ThreadPool::is_busy() {
+inline bool ThreadPool::is_busy() {
     std::unique_lock<std::mutex> jobs_lck(m_jobs_mtx);
 
     return !m_jobs.empty() || bool(m_num_active_tasks);
 }
 
 
-void ThreadPool::await() {
+inline void ThreadPool::await() {
     {
         std::unique_lock<std::mutex> jobs_lck(m_jobs_mtx);
         if (m_command_stop) {
@@ -143,14 +143,14 @@ void ThreadPool::await() {
 }
 
 
-void ThreadPool::clear_jobs() {
+inline void ThreadPool::clear_jobs() {
     stop();
 
     m_jobs = std::queue<std::function<void()>>();
 }
 
 
-void ThreadPool::stop() {
+inline void ThreadPool::stop() {
     {
         std::unique_lock<std::mutex> jobs_lck(m_jobs_mtx);
         if (m_command_stop) {
